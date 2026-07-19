@@ -1,0 +1,38 @@
+third_party/
+# Виртуальные окружения и Poetry
+.venv/
+.poetry/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# База данных SQLite (данные, не схема)
+db.sqlite3
+
+# Файлы окружения
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Артефакты сборки и логи
+logs/
+log/
+*.log
+
+# Медиа и загруженные файлы (если будешь хранить отдельно)
+media/
+uploads/
+
+# Тесты и покрытие
+.pytest_cache/
+htmlcov/
+.coverage
+
+# Прочее
+.DS_Store
+Thumbs.db
