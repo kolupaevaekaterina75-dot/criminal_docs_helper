@@ -81,11 +81,31 @@ class ExplanationConstructor(BaseDocumentConstructor):
         super().__init__("explanation.docx")
 
     def build_context(self, document: Document) -> Dict[str, Any]:
+        participant = document.participant
         return {
             "date": document.issue_date.strftime("%d.%m.%Y"),
-            "person_name": document.person_name,
-            "person_address": document.person_address,
-            "content": document.content
+            "location": document.location,
+            "place": document.place,
+            "start_time": document.start_time.strftime("%H:%M"),
+            "end_time": document.end_time.strftime("%H:%M"),
+            "full_name": document.person.full_name,
+            "birth_date": document.person.birth_date.strftime("%d.%m.%Y"),
+            "birth_place": document.person.birth_place,
+            "address": document.person.address,
+            "phone": document.person.phone,
+            "citizenship": document.person.citizenship,
+            "education": document.person.education,
+            "marital_status": document.person.marital_status,
+            "employment": document.person.employment,
+            "work_phone": document.person.work_phone,
+            "military_duty": document.person.military_duty,
+            "criminal_record": document.person.criminal_record,
+            "document_type": document.person.document_type,
+            "document_number": document.person.document_number,
+            "explanation_text": document.explanation_text,
+            "signature": document.person.signature,
+            "investigator_name": document.investigator.full_name,
+            "attachments": document.attachments
         }
 
 

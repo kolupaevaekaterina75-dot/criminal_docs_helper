@@ -23,10 +23,21 @@ class Participant(models.Model):
         ('other', 'Иные лица'),
     ]
 
-    full_name = models.CharField(_('ФИО'), max_length=255)
-    phone = models.CharField(_('Телефон'), max_length=50, blank=True)
-    role = models.CharField(_('Роль'), max_length=50, choices=ROLE_CHOICES)
-    side = models.CharField(_('Сторона'), max_length=50, choices=SIDE_CHOICES, default='other')
+    full_name = models.CharField(max_length=255, verbose_name="ФИО")
+    birth_date = models.DateField(verbose_name="Дата рождения")
+    birth_place = models.CharField(max_length=255, verbose_name="Место рождения")
+    address = models.TextField(verbose_name="Адрес проживания")
+    phone = models.CharField(max_length=20, verbose_name="Телефон")
+    citizenship = models.CharField(max_length=100, verbose_name="Гражданство")
+    education = models.CharField(max_length=100, verbose_name="Образование")
+    marital_status = models.CharField(max_length=50, verbose_name="Семейное положение")
+    employment = models.CharField(max_length=255, verbose_name="Место работы/учебы")
+    work_phone = models.CharField(max_length=20, verbose_name="Рабочий телефон")
+    military_duty = models.CharField(max_length=100, verbose_name="Отношение к воинской обязанности")
+    criminal_record = models.TextField(verbose_name="Наличие судимости")
+    document_type = models.CharField(max_length=100, verbose_name="Тип документа")
+    document_number = models.CharField(max_length=20, verbose_name="Номер документа")
+    signature = models.CharField(max_length=100, verbose_name="Подпись")
 
     created_at = models.DateTimeField(_('Дата регистрации'), auto_now_add=True)
 
