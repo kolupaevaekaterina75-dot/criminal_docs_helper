@@ -155,20 +155,21 @@ class VoluntarySurrenderConstructor(BaseDocumentConstructor):
         }
 
 
-class ExpertOrderConstructor(BaseDocumentConstructor):
+class ORMInstructionConstructor(BaseDocumentConstructor):
     def __init__(self):
-        super().__init__("expert_order.docx")
-
+        super().__init__("orm_instruction.docx")
+        
     def build_context(self, document: Document) -> Dict[str, Any]:
         return {
-            "date": document.issue_date.strftime("%d.%m.%Y"),
             "case_number": document.case_number,
-            "expert_name": document.expert_name,
-            "expert_type": document.expert_type,
-            "subject_matter": document.subject_matter,
-            "materials": document.materials,
-            "questions": document.questions,
-            "investigator": document.investigator.full_name,
+            "investigation_circumstances": document.investigation_circumstances,
+            "required_actions": document.required_actions,
+            "attachments": document.attachments,
             "investigator_position": document.investigator.position,
-            "recipient": document.recipient
+            "investigator_rank": document.investigator.rank,
+            "investigator_name": document.investigator.full_name,
+            "date_day": document.issue_date.strftime("%d"),
+            "date_month": document.issue_date.strftime("%m"),
+            "date_year": document.issue_date.strftime("%Y"),
+            "investigator_initials": document.investigator.initials
         }

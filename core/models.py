@@ -159,6 +159,20 @@ class Document(models.Model):
     recorded_correctly = models.CharField("Запись соответствует", max_length=50)
     remarks = models.TextField("Замечания", blank=True)
 
+    case_number = models.CharField("Номер уголовного дела", max_length=20)
+    investigation_circumstances = models.TextField("Обстоятельства расследования")
+    required_actions = models.TextField("Необходимые действия")
+    attachments = models.TextField("Приложения", blank=True)
+    
+    investigator = models.ForeignKey(
+        Employee,
+        on_delete=models.PROTECT,
+        related_name="orm_instructions",
+        verbose_name="Следователь"
+    )
+    
+    issue_date = models.DateField("Дата составления")
+
     location = models.CharField("Место составления", max_length=255)
     issue_date = models.DateField("Дата")
     start_time = models.TimeField("Время начала")
