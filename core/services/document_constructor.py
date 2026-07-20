@@ -4,7 +4,7 @@ from typing import Dict, Any
 from django.conf import settings
 from docxtpl import DocxTemplate
 from pathlib import Path
-from .models import Document
+from .models import Document, Participant
 
 class BaseDocumentConstructor:
     def __init__(self, template_name: str):

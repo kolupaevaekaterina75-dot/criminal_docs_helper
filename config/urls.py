@@ -20,3 +20,11 @@ from django.urls import path
 urlpatterns = [
     path('admin/', admin.site.urls),
 ]
+
+from django.urls import path
+from core.services import views as core_views
+
+urlpatterns = [
+    # другие маршруты...
+    path('documents/', core_views.document_list, name='document_list'),
+]
