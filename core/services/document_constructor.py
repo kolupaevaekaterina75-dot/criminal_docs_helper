@@ -114,11 +114,29 @@ class VoluntarySurrenderConstructor(BaseDocumentConstructor):
         super().__init__("voluntary_surrender.docx")
 
     def build_context(self, document: Document) -> Dict[str, Any]:
+        person = document.person
         return {
             "date": document.issue_date.strftime("%d.%m.%Y"),
-            "offense_date": document.offense_date.strftime("%d.%m.%Y"),
-            "offense_description": document.offense_description,
-            "author": document.author.full_name
+            "location": document.location,
+            "investigator_position": document.investigator.position,
+            "investigator_rank": document.investigator.rank,
+            "investigator_name": document.investigator.full_name,
+            "place": document.place,
+            "time": document.time.strftime("%H:%M"),
+            "authority_name": document.authority_name,
+            "person_full_name": person.full_name,
+            "birth_date": person.birth_date.strftime("%d.%m.%Y"),
+            "birth_place": person.birth_place,
+            "address": person.address,
+            "employment": person.employment,
+            "document_type": person.document_type,
+            "document_number": person.document_number,
+            "document_issued_by": person.document_issued_by,
+            "document_issue_date": person.document_issue_date.strftime("%d.%m.%Y"),
+            "crime_description": document.crime_description,
+            "read_method": document.read_method,
+            "recorded_correctly": document.recorded_correctly,
+            "remarks": document.remarks
         }
 
 

@@ -145,6 +145,20 @@ class Document(models.Model):
         related_name="reports"
     )
 
+    location = models.CharField("Место составления", max_length=255)
+    investigator = models.ForeignKey(
+        Employee,
+        on_delete=models.PROTECT,
+        related_name="voluntary_surrenders"
+    )
+    place = models.CharField("Место проведения", max_length=255)
+    time = models.TimeField("Время")
+    authority_name = models.CharField("Наименование органа", max_length=255)
+    crime_description = models.TextField("Описание преступления")
+    read_method = models.CharField("Способ ознакомления", max_length=50)
+    recorded_correctly = models.CharField("Запись соответствует", max_length=50)
+    remarks = models.TextField("Замечания", blank=True)
+
     status = models.CharField(
         _('Статус'),
         max_length=20,
