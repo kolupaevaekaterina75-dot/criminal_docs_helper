@@ -66,13 +66,28 @@ class InspectionProtocolConstructor(BaseDocumentConstructor):
     def build_context(self, document: Document) -> Dict[str, Any]:
         return {
             "date": document.issue_date.strftime("%d.%m.%Y"),
+            "location": document.location,
             "start_time": document.start_time.strftime("%H:%M"),
             "end_time": document.end_time.strftime("%H:%M"),
-            "location": document.location,
-            "author": document.author.full_name,
-            "content": document.content,
-            "witnesses": document.witnesses,
-            "participants": document.participants
+            "investigator_position": document.investigator.position,
+            "investigator_rank": document.investigator.rank,
+            "investigator_name": document.investigator.full_name,
+            "witness1_full_name": document.witness1.full_name,
+            "witness1_address": document.witness1.address,
+            "witness2_full_name": document.witness2.full_name,
+            "witness2_address": document.witness2.address,
+            "specialist_full_name": document.specialist.full_name,
+            "specialist_position": document.specialist.position,
+            "other_participants": document.other_participants,
+            "location_description": document.location_description,
+            "lighting": document.lighting,
+            "weather_conditions": document.weather_conditions,
+            "temperature": document.temperature,
+            "place_description": document.place_description,
+            "found_items": document.found_items,
+            "technical_means": document.technical_means,
+            "phototable_number": document.phototable_number,
+            "remarks": document.remarks
         }
 
 

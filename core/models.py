@@ -159,6 +159,105 @@ class Document(models.Model):
     recorded_correctly = models.CharField("Запись соответствует", max_length=50)
     remarks = models.TextField("Замечания", blank=True)
 
+    location = models.CharField("Место составления", max_length=255)
+    issue_date = models.DateField("Дата")
+    start_time = models.TimeField("Время начала")
+    end_time = models.TimeField("Время окончания")
+    investigator = models.ForeignKey(
+        Employee,
+        on_delete=models.PROTECT,
+        related_name="inspection_protocols"
+    )
+    witness1 = models.ForeignKey(
+        Witness,
+        related_name="witness1_protocols",
+        on_delete=models.PROTECT
+    )
+    issue_date = models.DateField("Дата составления")
+    start_time = models.TimeField("Время начала осмотра")
+    end_time = models.TimeField("Время окончания осмотра")
+    location = models.CharField("Место составления", max_length=255)
+    
+    # Данные следователя
+    investigator = models.ForeignKey(
+        Employee,
+        on_delete=models.PROTECT,
+        related_name="inspection_protocols",
+        verbose_name="Следователь"
+    )
+    
+    # Данные о сообщении
+    message_from = models.CharField("От кого получено сообщение", max_length=255)
+    message_about = models.TextField("О чем получено сообщение")
+    arrived_to = models.CharField("Место прибытия", max_length=255)
+    
+    # Понятые
+    witness1 = models.ForeignKey(
+        Witness,
+        related_name="witness1_protocols",
+        on_delete=models.PROTECT,
+        verbose_name="Понятой 1"
+    )
+    witness2 = models.ForeignKey(
+        Witness,
+        related_name="witness2_protocols",
+        on_delete=models.PROTECT,
+        verbose_name="Понятой 2"
+    )
+    
+    # Специалист
+    specialist = models.ForeignKey(
+        Specialist,
+        on_delete=models.PROTECT,
+        verbose_name="Специалист"
+    )
+    
+    # Дополнительные участники
+    other_participants = models.TextField("Иные участвующие лица", blank=True)
+    
+    # Условия осмотра
+    weather_conditions = models.CharField("Погодные условия", max_length=100)
+    lighting_conditions = models.CharField("Условия освещенности", max_length=100)
+    technical_means = models.TextField("Технические средства")
+    
+    # Основная информация
+    object_inspection = models.TextField("Объект осмотра")
+    inspection_results = models.TextField("Результаты осмотра")
+    examination_methods = models.TextField("Методы исследования")
+    seized_items = models.TextField("Изъятые предметы")
+    
+    # Замечания
+    reading_method = models.CharField("Способ ознакомления", max_length=100)
+    remarks = models.TextField("Замечания участников", blank=True)
+    
+    # Подписи
+    witness1_signature = models.CharField("Подпись понятого 1", max_length=50, blank=True)
+    witness2_signature = models.CharField("Подпись понятого 2", max_length=50, blank=True)
+    specialist_signature = models.CharField("Подпись специалиста", max_length=50, blank=True)
+    other_participants_signatures = models.TextField("Подписи иных участников", blank=True)
+    investigator_signature = models.CharField("Подпись следователя", max_length=50, blank=True)
+
+    def __str__(self):
+        return f"Протокол осмотра от {self.issue_date}"
+
+# models.py (продолжение - вспомогательные модели)
+
+class Witness(models.Model):
+    full_name = models.CharField("ФИО", max_length=255)
+    address = models.TextField("Адрес проживания")
+    phone = models.CharField("Телефон", max_length=20, blank=True)
+    
+    def __str__(self):
+        return self.full_name
+
+class Specialist(models.Model):
+    full_name = models.CharField("ФИО", max_length=255)
+    position = models.CharField("Должность", max_length=255)
+    organization = models.CharField("Организация", max_length=255)
+    
+    def __str__(self):
+        return f"{self.full_name} ({self.position})"
+
     status = models.CharField(
         _('Статус'),
         max_length=20,
