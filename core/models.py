@@ -9,7 +9,7 @@ class Participant(models.Model):
         ('suspect', 'Подозреваемый'),
         ('OUR', 'Оперуполномоченный'),
         ('victim', 'Потерпевший'),
-        ('witness', 'Свидетель'),
+        ('witness', 'Понятой'),
         ('lawyer', 'Защитник (адвокат)'),
         ('investigator', 'Следователь'),
         ('UUP', 'Участковый уполномоченный'),
@@ -206,12 +206,6 @@ class Witness(models.Model):
     def __str__(self):
         return self.full_name
     
-    witness1 = models.ForeignKey(
-        Witness,
-        related_name="witness1_protocols",
-        on_delete=models.PROTECT,
-        verbose_name="Понятой"
-    )
     issue_date = models.DateField("Дата составления")
     start_time = models.TimeField("Время начала осмотра")
     end_time = models.TimeField("Время окончания осмотра")
@@ -233,13 +227,13 @@ class Witness(models.Model):
     # Понятые
     witness1 = models.ForeignKey(
         Witness,
-        related_name="witness1_protocols",
+        related_name="documents_as_witness1",
         on_delete=models.PROTECT,
         verbose_name="Понятой 1"
     )
     witness2 = models.ForeignKey(
         Witness,
-        related_name="witness2_protocols",
+        related_name="documents_as_witness2",
         on_delete=models.PROTECT,
         verbose_name="Понятой 2"
     )
