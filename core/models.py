@@ -197,10 +197,20 @@ class Document(models.Model):
         on_delete=models.PROTECT,
         related_name="inspection_protocols"
     )
+
+class Witness(models.Model):
+    full_name = models.CharField("ФИО", max_length=255)
+    address = models.TextField("Адрес проживания")
+    phone = models.CharField("Телефон", max_length=20, blank=True)
+    
+    def __str__(self):
+        return self.full_name
+    
     witness1 = models.ForeignKey(
         Witness,
         related_name="witness1_protocols",
-        on_delete=models.PROTECT
+        on_delete=models.PROTECT,
+        verbose_name="Понятой"
     )
     issue_date = models.DateField("Дата составления")
     start_time = models.TimeField("Время начала осмотра")
@@ -241,7 +251,6 @@ class Document(models.Model):
         verbose_name="Специалист"
     )
     
-    # Дополнительные участники
     other_participants = models.TextField("Иные участвующие лица", blank=True)
     
     # Условия осмотра
