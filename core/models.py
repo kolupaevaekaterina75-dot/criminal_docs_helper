@@ -103,10 +103,6 @@ class Employee(models.Model):
         return self.full_name
     
 class Document(models.Model):
-    
-
-
-class Document(models.Model):
     STATUS_CHOICES = [
         ('draft', 'Черновик'),
         ('ready', 'Готов к подписанию'),
