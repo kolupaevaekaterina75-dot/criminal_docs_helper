@@ -92,6 +92,18 @@ class DocumentType(models.Model):
 
     def __str__(self):
         return self.name
+    
+class Employee(models.Model):
+    full_name = models.CharField("ФИО", max_length=255)
+    position = models.CharField("Должность", max_length=255)
+    rank = models.CharField("Звание/Чин", max_length=100, blank=True)
+    initials = models.CharField("Инициалы", max_length=20, blank=True)
+    
+    def __str__(self):
+        return self.full_name
+    
+class Document(models.Model):
+    
 
 
 class Document(models.Model):
@@ -151,6 +163,13 @@ class Document(models.Model):
         on_delete=models.PROTECT,
         related_name="voluntary_surrenders"
     )
+    investigator = models.ForeignKey(
+        Employee,  # теперь это должно работать
+        on_delete=models.PROTECT,
+        related_name="documents",
+        verbose_name="Следователь"
+    )
+
     place = models.CharField("Место проведения", max_length=255)
     time = models.TimeField("Время")
     authority_name = models.CharField("Наименование органа", max_length=255)
