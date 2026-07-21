@@ -2,6 +2,8 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from datetime import date
+from .employee import Employee
+from .models import Employee, Witness, Document
 
 
 class Participant(models.Model):
@@ -102,6 +104,14 @@ class Employee(models.Model):
     def __str__(self):
         return self.full_name
     
+class Witness(models.Model):
+    full_name = models.CharField("ФИО", max_length=255)
+    address = models.TextField("Адрес проживания")
+    phone = models.CharField("Телефон", max_length=20, blank=True)
+    
+    def __str__(self):
+        return self.full_name
+    
 class Document(models.Model):
     STATUS_CHOICES = [
         ('draft', 'Черновик'),
@@ -125,12 +135,28 @@ class Document(models.Model):
         verbose_name=_('Вид документа')
     )
 
+    def __str__(self):
+        return f"Протокол осмотра от {self.issue_date}"
+    
     case_date = models.DateField(_('Дата дела'), help_text=_('Дата возбуждения/начала дела'))
     case_number = models.CharField(_('Номер дела'), max_length=100)
     article_uk_rf = models.CharField(
         _('Статья УК РФ'),
         max_length=100,
         help_text=_('Например: 158 ч. 2 п. «в»')
+    )
+
+    witness1 = models.ForeignKey(
+        Witness,
+        related_name="documents_as_witness1",
+        on_delete=models.PROTECT,
+        verbose_name="Понятой 1"
+    )
+    witness2 = models.ForeignKey(
+        Witness,
+        related_name="documents_as_witness2",
+        on_delete=models.PROTECT,
+        verbose_name="Понятой 2"
     )
 
     content = models.TextField(_('Содержание документа'), blank=True)
@@ -154,11 +180,7 @@ class Document(models.Model):
     )
 
     location = models.CharField("Место составления", max_length=255)
-    investigator = models.ForeignKey(
-        Employee,
-        on_delete=models.PROTECT,
-        related_name="voluntary_surrenders"
-    )
+    
     investigator = models.ForeignKey(
         Employee,  # теперь это должно работать
         on_delete=models.PROTECT,
@@ -179,32 +201,14 @@ class Document(models.Model):
     required_actions = models.TextField("Необходимые действия")
     attachments = models.TextField("Приложения", blank=True)
     
-    investigator = models.ForeignKey(
-        Employee,
-        on_delete=models.PROTECT,
-        related_name="orm_instructions",
-        verbose_name="Следователь"
-    )
-    
     issue_date = models.DateField("Дата составления")
 
     location = models.CharField("Место составления", max_length=255)
     issue_date = models.DateField("Дата")
     start_time = models.TimeField("Время начала")
     end_time = models.TimeField("Время окончания")
-    investigator = models.ForeignKey(
-        Employee,
-        on_delete=models.PROTECT,
-        related_name="inspection_protocols"
-    )
-
-class Witness(models.Model):
-    full_name = models.CharField("ФИО", max_length=255)
-    address = models.TextField("Адрес проживания")
-    phone = models.CharField("Телефон", max_length=20, blank=True)
     
-    def __str__(self):
-        return self.full_name
+
     
     issue_date = models.DateField("Дата составления")
     start_time = models.TimeField("Время начала осмотра")
@@ -271,16 +275,6 @@ class Witness(models.Model):
 
     def __str__(self):
         return f"Протокол осмотра от {self.issue_date}"
-
-# models.py (продолжение - вспомогательные модели)
-
-class Witness(models.Model):
-    full_name = models.CharField("ФИО", max_length=255)
-    address = models.TextField("Адрес проживания")
-    phone = models.CharField("Телефон", max_length=20, blank=True)
-    
-    def __str__(self):
-        return self.full_name
 
 class Specialist(models.Model):
     full_name = models.CharField("ФИО", max_length=255)
