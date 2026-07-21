@@ -2,9 +2,14 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from datetime import date
-from .employee import Employee
-from .models import Employee, Witness, Document
 
+STATUS_CHOICES = [
+    ('draft', 'Черновик'),
+    ('ready', 'Готов к подписанию'),
+    ('signed', 'Подписан'),
+    ('sent', 'Направлен'),
+    ('archived', 'В архиве'),
+]
 
 class Participant(models.Model):
     ROLE_CHOICES = [
@@ -112,6 +117,29 @@ class Witness(models.Model):
     def __str__(self):
         return self.full_name
     
+class Specialist(models.Model):
+    full_name = models.CharField("ФИО", max_length=255)
+    position = models.CharField("Должность", max_length=255)
+    organization = models.CharField("Организация", max_length=255)
+    
+    STATUS_CHOICES = [  # Определяем заново
+        ('draft', 'Черновик'),
+        ('ready', 'Готов к подписанию'),
+        ('signed', 'Подписан'),
+        ('sent', 'Направлен'),
+        ('archived', 'В архиве'),
+    ]
+    
+    status = models.CharField(
+        _('Статус'),
+        max_length=20,
+        choices=STATUS_CHOICES,  # Теперь это работает
+        default='draft'
+    )
+    
+    def __str__(self):
+        return f"{self.full_name} ({self.position})"
+    
 class Document(models.Model):
     STATUS_CHOICES = [
         ('draft', 'Черновик'),
@@ -121,6 +149,13 @@ class Document(models.Model):
         ('archived', 'В архиве'),
     ]
 
+    status = models.CharField(
+        _('Статус'),
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='draft'
+    )
+
     participant = models.ForeignKey(
         Participant,
         on_delete=models.SET_NULL,
@@ -129,21 +164,18 @@ class Document(models.Model):
         related_name='documents',
         verbose_name=_('Кто составил')
     )
+    
     doc_type = models.ForeignKey(
         DocumentType,
         on_delete=models.PROTECT,
         verbose_name=_('Вид документа')
     )
 
-    def __str__(self):
-        return f"Протокол осмотра от {self.issue_date}"
-    
-    case_date = models.DateField(_('Дата дела'), help_text=_('Дата возбуждения/начала дела'))
+    case_date = models.DateField(_('Дата дела'))
     case_number = models.CharField(_('Номер дела'), max_length=100)
     article_uk_rf = models.CharField(
         _('Статья УК РФ'),
-        max_length=100,
-        help_text=_('Например: 158 ч. 2 п. «в»')
+        max_length=100
     )
 
     witness1 = models.ForeignKey(
@@ -152,6 +184,7 @@ class Document(models.Model):
         on_delete=models.PROTECT,
         verbose_name="Понятой 1"
     )
+    
     witness2 = models.ForeignKey(
         Witness,
         related_name="documents_as_witness2",
@@ -180,9 +213,8 @@ class Document(models.Model):
     )
 
     location = models.CharField("Место составления", max_length=255)
-    
     investigator = models.ForeignKey(
-        Employee,  # теперь это должно работать
+        Employee,
         on_delete=models.PROTECT,
         related_name="documents",
         verbose_name="Следователь"
@@ -191,7 +223,6 @@ class Document(models.Model):
     place = models.CharField("Место проведения", max_length=255)
     time = models.TimeField("Время")
     authority_name = models.CharField("Наименование органа", max_length=255)
-    crime_description = models.TextField("Описание преступления")
     read_method = models.CharField("Способ ознакомления", max_length=50)
     recorded_correctly = models.CharField("Запись соответствует", max_length=50)
     remarks = models.TextField("Замечания", blank=True)
@@ -201,46 +232,14 @@ class Document(models.Model):
     required_actions = models.TextField("Необходимые действия")
     attachments = models.TextField("Приложения", blank=True)
     
-    issue_date = models.DateField("Дата составления")
-
-    location = models.CharField("Место составления", max_length=255)
     issue_date = models.DateField("Дата")
     start_time = models.TimeField("Время начала")
     end_time = models.TimeField("Время окончания")
-    
-
-    
-    issue_date = models.DateField("Дата составления")
-    start_time = models.TimeField("Время начала осмотра")
-    end_time = models.TimeField("Время окончания осмотра")
-    location = models.CharField("Место составления", max_length=255)
-    
-    # Данные следователя
-    investigator = models.ForeignKey(
-        Employee,
-        on_delete=models.PROTECT,
-        related_name="inspection_protocols",
-        verbose_name="Следователь"
-    )
     
     # Данные о сообщении
     message_from = models.CharField("От кого получено сообщение", max_length=255)
     message_about = models.TextField("О чем получено сообщение")
     arrived_to = models.CharField("Место прибытия", max_length=255)
-    
-    # Понятые
-    witness1 = models.ForeignKey(
-        Witness,
-        related_name="documents_as_witness1",
-        on_delete=models.PROTECT,
-        verbose_name="Понятой 1"
-    )
-    witness2 = models.ForeignKey(
-        Witness,
-        related_name="documents_as_witness2",
-        on_delete=models.PROTECT,
-        verbose_name="Понятой 2"
-    )
     
     # Специалист
     specialist = models.ForeignKey(
@@ -276,28 +275,7 @@ class Document(models.Model):
     def __str__(self):
         return f"Протокол осмотра от {self.issue_date}"
 
-class Specialist(models.Model):
-    full_name = models.CharField("ФИО", max_length=255)
-    position = models.CharField("Должность", max_length=255)
-    organization = models.CharField("Организация", max_length=255)
-    
-    def __str__(self):
-        return f"{self.full_name} ({self.position})"
 
-    status = models.CharField(
-        _('Статус'),
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default='draft'
-    )
-    file_path = models.FilePathField(
-        _('Путь к файлу .docx'),
-        path='media/documents',
-        allow_files=True,
-        allow_folders=False,
-        blank=True,
-        null=True
-    )
 
     created_at = models.DateTimeField(_('Дата создания записи'), auto_now_add=True)
     updated_at = models.DateTimeField(_('Дата обновления'), auto_now=True)
